@@ -1,0 +1,13 @@
+diff --git a/source/core/FileLoader.hpp b/source/core/FileLoader.hpp
+index d757bcd9..6bfe457a 100644
+--- a/source/core/FileLoader.hpp
++++ b/source/core/FileLoader.hpp
+@@ -9,6 +9,7 @@
+ #define MNN_FileLoader_hpp
+ #include <vector>
+ #include <mutex>
++#include <string>
+ #include "core/AutoStorage.h"
+ namespace MNN {
+ class MNN_PUBLIC FileLoader {
+

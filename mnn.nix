@@ -1,6 +1,7 @@
 {
   pkgs,
   stdenv,
+  gcc12Stdenv,
   lib,
   cmake,
   vulkan-headers,
@@ -13,7 +14,12 @@
   enableOpenmp ? stdenv.isLinux,
   enableMetal ? stdenv.isDarwin,
 }:
-pkgs.gcc12Stdenv.mkDerivation rec {
+(
+  if enableCuda
+  then gcc12Stdenv
+  else stdenv
+)
+.mkDerivation rec {
   pname = "mnn";
   version = "2.9.0";
 
@@ -23,6 +29,11 @@ pkgs.gcc12Stdenv.mkDerivation rec {
     rev = version;
     hash = "sha256-7kpErL53VHksUurTUndlBRNcCL8NRpVuargMk0EBtxA=";
   };
+
+  # The patch is only needed when building with normal stdenv and on linux but not with gcc12Stdenv or on darwin
+  patches = lib.optionals (stdenv.isLinux && !enableCuda) [
+    ./patches/linux-string.patch
+  ];
 
   cmakeFlags =
     [
