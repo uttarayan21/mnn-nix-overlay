@@ -15,7 +15,9 @@
   enableMetal ? stdenv.isDarwin,
 }:
 (
-  if enableCuda
+  if enableCuda && stdenv.isDarwin
+  then throw "Cuda is not supported on darwin"
+  else if enableCuda
   then gcc12Stdenv
   else stdenv
 )
