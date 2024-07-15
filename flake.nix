@@ -22,7 +22,11 @@
         config.allowUnfree = true;
       };
     in {
-      inherit overlays;
+      overlays = {
+        default = final: prev: {
+          mnn = pkgs.callPackage ./mnn.nix {};
+        };
+      };
       packages = {
         default = pkgs.mnn;
         mnn = pkgs.mnn;
