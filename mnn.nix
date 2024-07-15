@@ -2,6 +2,7 @@
   pkgs,
   stdenv,
   gcc12Stdenv,
+  darwin,
   lib,
   cmake,
   vulkan-headers,
