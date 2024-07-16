@@ -62,6 +62,18 @@
       "-DMNN_BUILD_OPENCV=ON"
     ];
 
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/include
+    mkdir -p $out/lib
+    mkdir -p $out/bin
+    cp -r $src/include/* $out/include
+    cp MNNConvert $out/bin
+    find -type f -name 'libMNN*.a' -exec cp {} $out/lib \;
+    find -type f -name 'libMNN*.so' -exec cp {} $out/lib \;
+    runHook postInstall
+  '';
+
   nativeBuildInputs = [cmake] ++ lib.optionals enableCuda [cudatoolkit];
   buildInputs =
     lib.optionals enableCuda [cudatoolkit]
