@@ -90,11 +90,10 @@
     runHook preInstall
     mkdir -p $out/include
     mkdir -p $out/lib
-    mkdir -p $out/bin
     cp -r $src/include/* $out/include
-    ${lib.strings.optionalString buildConverter "cp MNNConvert $out/bin"}
+    ${lib.strings.optionalString buildConverter "mkdir -p $out/bin && cp MNNConvert $out/bin"}
     find -type f -name 'libMNN*.a' -exec cp {} $out/lib \;
-    ${lib.strings.optionalString enableAppleFramework "cp -r MNN.framework $out/lib"}
+    ${lib.strings.optionalString enableAppleFramework "mkdir -p $out/Frameworks && cp -r MNN.framework $out/Frameworks"}
     runHook postInstall
   '';
 
