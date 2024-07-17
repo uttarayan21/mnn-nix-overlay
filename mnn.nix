@@ -59,7 +59,7 @@
       "-DMNN_SEP_BUILD=OFF"
     ]
     ++ lib.optionals (enableAppleFramework && !enableSepBuild) [
-      "-DMNN_APPL_FMWK=ON"
+      "-DMNN_AAPL_FMWK=ON"
     ]
     ++ lib.optionals (!buildTools) [
       "-DMNN_BUILD_TOOLS=OFF"
@@ -94,6 +94,7 @@
     cp -r $src/include/* $out/include
     ${lib.strings.optionalString buildConverter "cp MNNConvert $out/bin"}
     find -type f -name 'libMNN*.a' -exec cp {} $out/lib \;
+    ${lib.strings.optionalString enableAppleFramework "cp -r MNN.framework $out/lib"}
     runHook postInstall
   '';
 
