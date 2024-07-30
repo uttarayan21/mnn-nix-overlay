@@ -38,8 +38,8 @@
     repo = pname;
     # rev = version;
     # hash = "sha256-7kpErL53VHksUurTUndlBRNcCL8NRpVuargMk0EBtxA="; 2.9.0
-    rev = "master";
-    sha256 = "sha256-0KJ2rgwEQeTeJz889X7bZQdkZkxV9LCvk55Ywt+o1/s=";
+    rev = "d9f7679db27e6beb84703b9757f48af063f48ebb";
+    sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
   };
 
   # The patch is only needed when building with normal stdenv and on linux but not with gcc12Stdenv or on darwin
