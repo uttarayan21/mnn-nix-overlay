@@ -12,6 +12,7 @@
   buildPortable ? true,
   buildConverter ? false,
   buildTools ? false,
+  buildLlm ? false,
   enableVulkan ? stdenv.isLinux,
   enableCuda ? false,
   buildOpencv ? false,
@@ -21,95 +22,128 @@
   enableShared ? false,
   enableSepBuild ? enableShared,
   useSystemLib ? false,
-}:
-(
-  if enableCuda && stdenv.isDarwin
-  then throw "Cuda is not supported on darwin"
-  else if enableCuda
-  then gcc12Stdenv
-  else stdenv
-)
-.mkDerivation rec {
-  pname = "mnn";
-  version = "2.9.0";
+}: let
+  cmakeFlag = flag: cflag:
+    "-D"
+    + cflag
+    + "="
+    + (
+      if flag
+      then "ON"
+      else "OFF"
+    );
+in
+  (
+    if enableCuda && stdenv.isDarwin
+    then throw "Cuda is not supported on darwin"
+    else if enableCuda
+    then gcc12Stdenv
+    else stdenv
+  )
+  .mkDerivation rec {
+    pname = "mnn";
+    version = "2.9.0";
 
-  src = fetchFromGitHub {
-    owner = "alibaba";
-    repo = pname;
-    # rev = version;
-    # hash = "sha256-7kpErL53VHksUurTUndlBRNcCL8NRpVuargMk0EBtxA="; 2.9.0
-    rev = "d9f7679db27e6beb84703b9757f48af063f48ebb";
-    sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
-  };
+    src = fetchFromGitHub {
+      owner = "alibaba";
+      repo = pname;
+      # rev = version;
+      # hash = "sha256-7kpErL53VHksUurTUndlBRNcCL8NRpVuargMk0EBtxA="; 2.9.0
+      rev = "d9f7679db27e6beb84703b9757f48af063f48ebb";
+      sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
+    };
 
-  # The patch is only needed when building with normal stdenv and on linux but not with gcc12Stdenv or on darwin
-  # patches = lib.optionals (stdenv.isLinux && !enableCuda) [
-  #   ./patches/linux-string.patch
-  # ];
+    # The patch is only needed when building with normal stdenv and on linux but not with gcc12Stdenv or on darwin
+    # patches = lib.optionals (stdenv.isLinux && !enableCuda) [
+    #   ./patches/linux-string.patch
+    # ];
 
-  cmakeFlags =
-    []
-    ++ lib.optionals (!useSystemLib) [
-      "-DMNN_USE_SYSTEM_LIB=OFF"
-    ]
-    ++ lib.optionals (!enableShared) [
-      "-DMNN_BUILD_SHARED_LIBS=OFF"
-    ]
-    ++ lib.optionals (!enableShared && !enableSepBuild) [
-      "-DMNN_SEP_BUILD=OFF"
-    ]
-    ++ lib.optionals (enableAppleFramework && !enableSepBuild) [
-      "-DMNN_AAPL_FMWK=ON"
-    ]
-    ++ lib.optionals (!buildTools) [
-      "-DMNN_BUILD_TOOLS=OFF"
-    ]
-    ++ lib.optionals buildConverter [
-      "-DMNN_BUILD_CONVERTER=ON"
-    ]
-    ++ lib.optionals buildPortable [
-      "-DMNN_PORTABLE_BUILD=ON"
-    ]
-    ++ lib.optionals (stdenv.isDarwin && enableMetal) [
-      "-DMNN_METAL=ON"
-    ]
-    ++ lib.optionals enableOpenmp [
-      "-DMNN_OPENMP=ON"
-    ]
-    ++ lib.optionals enableVulkan [
-      "-DMNN_VULKAN=ON"
-    ]
-    ++ lib.optionals enableCuda [
-      "-DMNN_CUDA=ON"
-    ]
-    ++ lib.optionals buildOpencv [
-      "-DMNN_BUILD_OPENCV=ON"
+    cmakeFlags = [
+      (cmakeFlag
+        useSystemLib
+        "MNN_USE_SYSTEM_LIB")
+      (
+        cmakeFlag
+        buildLlm
+        "MNN_BUILD_LLM"
+      )
+      (
+        cmakeFlag
+        enableShared
+        "MNN_BUILD_SHARED_LIBS"
+      )
+      (
+        cmakeFlag
+        enableSepBuild
+        "MNN_SEP_BUILD"
+      )
+      (
+        cmakeFlag
+        enableAppleFramework
+        "MNN_AAPL_FMWK"
+      )
+      (
+        cmakeFlag
+        buildTools
+        "MNN_BUILD_TOOLS"
+      )
+      (
+        cmakeFlag
+        buildConverter
+        "MNN_BUILD_CONVERTER"
+      )
+      (
+        cmakeFlag
+        buildPortable
+        "MNN_PORTABLE_BUILD"
+      )
+      (
+        cmakeFlag
+        enableMetal
+        "MNN_METAL"
+      )
+      (
+        cmakeFlag
+        enableOpenmp
+        "MNN_OPENMP"
+      )
+      (
+        cmakeFlag
+        enableVulkan
+        "MNN_VULKAN"
+      )
+      (
+        cmakeFlag
+        enableCuda
+        "MNN_CUDA"
+      )
+      (
+        cmakeFlag
+        buildOpencv
+        "MNN_BUILD_OPENCV"
+      )
     ];
 
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $out/include
-    mkdir -p $out/lib
-    cp -r $src/include/* $out/include
-    ${lib.strings.optionalString buildConverter "mkdir -p $out/bin && cp MNNConvert $out/bin"}
-    find -type f -name 'libMNN*.a' -exec cp {} $out/lib \;
-    ${lib.strings.optionalString enableAppleFramework "mkdir -p $out/Frameworks && cp -r MNN.framework $out/Frameworks"}
-    runHook postInstall
-  '';
+    installPhase = ''
+      runHook preInstall
+      cmake --build . --target install
+      ${lib.strings.optionalString buildConverter "mkdir -p $out/bin && cp MNNConvert $out/bin"}
+      runHook postInstall
+    '';
 
-  nativeBuildInputs = [cmake] ++ lib.optionals enableCuda [cudatoolkit];
-  buildInputs =
-    lib.optionals enableCuda [cudatoolkit]
-    ++ (
-      if stdenv.isDarwin
-      then
-        (with pkgs.darwin.apple_sdk.frameworks;
-          [
-            Metal
-            Foundation
-            CoreGraphics
-          ]
-          ++ lib.optionals enableVulkan [darwin.moltenvk])
-      else (lib.optionals enableVulkan [vulkan-headers vulkan-loader])
-    );
-}
+    nativeBuildInputs = [cmake] ++ lib.optionals enableCuda [cudatoolkit];
+    buildInputs =
+      lib.optionals enableCuda [cudatoolkit]
+      ++ (
+        if stdenv.isDarwin
+        then
+          (with pkgs.darwin.apple_sdk.frameworks;
+            [
+              Metal
+              Foundation
+              CoreGraphics
+            ]
+            ++ lib.optionals enableVulkan [darwin.moltenvk])
+        else (lib.optionals enableVulkan [vulkan-headers vulkan-loader])
+      );
+  }
