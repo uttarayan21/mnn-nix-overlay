@@ -53,10 +53,9 @@ in
       sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
     };
 
-    # The patch is only needed when building with normal stdenv and on linux but not with gcc12Stdenv or on darwin
-    # patches = lib.optionals (stdenv.isLinux && !enableCuda) [
-    #   ./patches/linux-string.patch
-    # ];
+    patches = [
+      ./patches/no_llm_demo.patch
+    ];
 
     cmakeFlags = [
       (cmakeFlag
