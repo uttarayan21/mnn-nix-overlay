@@ -148,7 +148,9 @@ in
               Foundation
               CoreGraphics
             ]
-            ++ lib.optionals enableVulkan [darwin.moltenvk])
+            ++ lib.optionals enableVulkan [darwin.moltenvk]
+            ++ lib.optionals enableOpencl [pkgs.darwin.apple_sdk.frameworks.OpenCL]
+            )
         else (lib.optionals enableVulkan [vulkan-headers vulkan-loader])
       );
   }
