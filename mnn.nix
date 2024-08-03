@@ -15,6 +15,7 @@
   buildLlm ? false,
   enableVulkan ? stdenv.isLinux,
   enableCuda ? false,
+  enableOpencl ? (stdenv.isLinux || stdenv.isDarwin),
   buildOpencv ? false,
   enableOpenmp ? false,
   enableMetal ? stdenv.isDarwin,
@@ -80,6 +81,11 @@ in
         cmakeFlag
         enableAppleFramework
         "MNN_AAPL_FMWK"
+      )
+      (
+        cmakeFlag
+        enableOpencl
+        "MNN_OPENCL"
       )
       (
         cmakeFlag
