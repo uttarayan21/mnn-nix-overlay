@@ -13,11 +13,13 @@
   buildConverter ? false,
   buildTools ? false,
   buildLlm ? false,
+  buildDiffusion ? false,
   enableVulkan ? stdenv.isLinux,
   enableCuda ? false,
   enableOpencl ? (stdenv.isLinux || stdenv.isDarwin),
-  buildOpencv ? false,
-  enableOpenmp ? false,
+  buildOpencv ? buildDiffusion,
+  imgcodecs ? buildDiffusion,
+  enableOpenmp ? true,
   enableMetal ? stdenv.isDarwin,
   enableAppleFramework ? false,
   enableShared ? false,
@@ -66,6 +68,11 @@ in
         cmakeFlag
         buildLlm
         "MNN_BUILD_LLM"
+      )
+      (
+        cmakeFlag
+        buildDiffusion
+        "MNN_BUILD_DIFFUSION"
       )
       (
         cmakeFlag
@@ -127,12 +134,18 @@ in
         buildOpencv
         "MNN_BUILD_OPENCV"
       )
+      (
+        cmakeFlag
+        imgcodecs
+        "MNN_IMGCODECS"
+      )
     ];
 
     installPhase = ''
       runHook preInstall
       cmake --build . --target install
       ${lib.strings.optionalString buildConverter "mkdir -p $out/bin && cp MNNConvert $out/bin"}
+      ${lib.strings.optionalString (buildDiffusion && buildOpencv && imgcodecs) "mkdir -p $out/bin && cp diffusion_demo $out/bin"}
       runHook postInstall
     '';
 
