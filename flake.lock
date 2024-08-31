@@ -18,6 +18,22 @@
         "type": "github"
       }
     },
+    "mnn": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1724806486,
+        "narHash": "sha256-Q3ag31WI1W3uUSwcv+TMyM9NsyAFO7htpmG/stRT2CI=",
+        "owner": "alibaba",
+        "repo": "MNN",
+        "rev": "d74a62754bfc41009f3f170999cb3a55aaccc216",
+        "type": "github"
+      },
+      "original": {
+        "owner": "alibaba",
+        "repo": "MNN",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1721562059,
@@ -37,6 +53,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
+        "mnn": "mnn",
         "nixpkgs": "nixpkgs"
       }
     },
