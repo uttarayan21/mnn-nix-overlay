@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    mnn.url = "github:alibaba/MNN";
+    mnn.url = "github:alibaba/MNN/2.9.6";
     mnn.flake = false;
   };
 
@@ -17,7 +17,11 @@
     flake-utils.lib.eachDefaultSystem (system: let
       overlays = [
         (final: prev: {
-          mnn = pkgs.callPackage ./mnn.nix {src = inputs.mnn;};
+          mnn = pkgs.callPackage ./mnn.nix {
+            src = inputs.mnn;
+            version = "2.9.6";
+            buildConverter = true;
+          };
         })
       ];
       pkgs = import nixpkgs {
@@ -27,7 +31,10 @@
     in {
       overlays = {
         default = final: prev: {
-          mnn = pkgs.callPackage ./mnn.nix {};
+          mnn = pkgs.callPackage ./mnn.nix {
+            version = "2.9.6";
+            src = inputs.mnn;
+          };
         };
       };
       packages = {

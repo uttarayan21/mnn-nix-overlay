@@ -34,6 +34,9 @@
       rev = "d9f7679db27e6beb84703b9757f48af063f48ebb";
       sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
     },
+  version ? "2.9.0",
+  patches ? [
+  ],
 }: let
   cmakeFlag = flag: cflag:
     "-D"
@@ -53,94 +56,29 @@ in
     else stdenv
   )
   .mkDerivation rec {
-    inherit src;
+    inherit src patches version;
     pname = "mnn";
-    version = "2.9.0";
 
-    # patches = [
-    #   ./patches/no_llm_demo.patch
-    # ];
-
-    cmakeFlags = [
-      (cmakeFlag
-        useSystemLib
-        "MNN_USE_SYSTEM_LIB")
-      (
-        cmakeFlag
-        buildLlm
-        "MNN_BUILD_LLM"
-      )
-      (
-        cmakeFlag
-        buildDiffusion
-        "MNN_BUILD_DIFFUSION"
-      )
-      (
-        cmakeFlag
-        enableShared
-        "MNN_BUILD_SHARED_LIBS"
-      )
-      (
-        cmakeFlag
-        enableSepBuild
-        "MNN_SEP_BUILD"
-      )
-      (
-        cmakeFlag
-        enableAppleFramework
-        "MNN_AAPL_FMWK"
-      )
-      (
-        cmakeFlag
-        enableOpencl
-        "MNN_OPENCL"
-      )
-      (
-        cmakeFlag
-        buildTools
-        "MNN_BUILD_TOOLS"
-      )
-      (
-        cmakeFlag
-        buildConverter
-        "MNN_BUILD_CONVERTER"
-      )
-      (
-        cmakeFlag
-        buildPortable
-        "MNN_PORTABLE_BUILD"
-      )
-      (
-        cmakeFlag
-        enableMetal
-        "MNN_METAL"
-      )
-      (
-        cmakeFlag
-        enableOpenmp
-        "MNN_OPENMP"
-      )
-      (
-        cmakeFlag
-        enableVulkan
-        "MNN_VULKAN"
-      )
-      (
-        cmakeFlag
-        enableCuda
-        "MNN_CUDA"
-      )
-      (
-        cmakeFlag
-        buildOpencv
-        "MNN_BUILD_OPENCV"
-      )
-      (
-        cmakeFlag
-        imgcodecs
-        "MNN_IMGCODECS"
-      )
-    ];
+    cmakeFlags =
+      lib.attrsets.mapAttrsToList (name: value: (cmakeFlag value name))
+      {
+        "MNN_USE_SYSTEM_LIB" = useSystemLib;
+        "MNN_BUILD_LLM" = buildLlm;
+        "MNN_BUILD_DIFFUSION" = buildDiffusion;
+        "MNN_BUILD_SHARED_LIBS" = enableShared;
+        "MNN_SEP_BUILD" = enableSepBuild;
+        "MNN_AAPL_FMWK" = enableAppleFramework;
+        "MNN_OPENCL" = enableOpencl;
+        "MNN_BUILD_TOOLS" = buildTools;
+        "MNN_BUILD_CONVERTER" = buildConverter;
+        "MNN_PORTABLE_BUILD" = buildPortable;
+        "MNN_METAL" = enableMetal;
+        "MNN_OPENMP" = enableOpenmp;
+        "MNN_VULKAN" = enableVulkan;
+        "MNN_CUDA" = enableCuda;
+        "MNN_BUILD_OPENCV" = buildOpencv;
+        "MNN_IMGCODECS" = imgcodecs;
+      };
 
     installPhase = ''
       runHook preInstall
