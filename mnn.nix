@@ -34,7 +34,7 @@
       rev = "d9f7679db27e6beb84703b9757f48af063f48ebb";
       sha256 = "sha256-fnoCwZfnnPVZDq0irMRCD/AD0AMxRsHWGKHpuccbr48=";
     },
-  version ? "2.9.0",
+  version ? "3.0.1",
   patches ? [
   ],
 }: let
@@ -95,14 +95,10 @@ in
         if stdenv.isDarwin
         then
           (
-            with pkgs.darwin.apple_sdk.frameworks;
-              [
-                Metal
-                Foundation
-                CoreGraphics
-              ]
-              ++ lib.optionals enableVulkan [darwin.moltenvk]
-              ++ lib.optionals enableOpencl [pkgs.darwin.apple_sdk.frameworks.OpenCL]
+            [
+              pkgs.apple-sdk_13
+            ]
+            ++ lib.optionals enableVulkan [darwin.moltenvk]
           )
         else (lib.optionals enableVulkan [vulkan-headers vulkan-loader])
       );
