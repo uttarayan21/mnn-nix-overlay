@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    mnn.url = "github:alibaba/MNN/3.0.1";
+    mnn.url = "github:alibaba/MNN/3.2.0";
     mnn.flake = false;
   };
 
@@ -15,7 +15,7 @@
     ...
   } @ inputs:
     flake-utils.lib.eachDefaultSystem (system: let
-      version = "3.0.1";
+      version = "3.2.0";
       overlays = [
         (final: prev: {
           mnn = pkgs.callPackage ./mnn.nix {

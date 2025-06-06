@@ -21,27 +21,27 @@
     "mnn": {
       "flake": false,
       "locked": {
-        "lastModified": 1733133656,
-        "narHash": "sha256-5DWM5nA3riAkuuhEFdq5tbOUg/mkTOPBhb/m4w4lYB4=",
+        "lastModified": 1749173738,
+        "narHash": "sha256-pNljvQ4xMZ4VmuxQyXt+boNBZD0+UZNpNLrWrj8Rtfw=",
         "owner": "alibaba",
         "repo": "MNN",
-        "rev": "98ba45b4561f68cbf6b5a39debb80eb91c64cc32",
+        "rev": "ebdada82634300956e08bd4056ecfeb1e4f23b32",
         "type": "github"
       },
       "original": {
         "owner": "alibaba",
-        "ref": "3.0.1",
+        "ref": "3.2.0",
         "repo": "MNN",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1733015953,
-        "narHash": "sha256-t4BBVpwG9B4hLgc6GUBuj3cjU7lP/PJfpTHuSqE+crk=",
+        "lastModified": 1748929857,
+        "narHash": "sha256-lcZQ8RhsmhsK8u7LIFsJhsLh/pzR9yZ8yqpTzyGdj+Q=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "ac35b104800bff9028425fec3b6e8a41de2bbfff",
+        "rev": "c2a03962b8e24e669fb37b7df10e7c79531ff1a4",
         "type": "github"
       },
       "original": {
