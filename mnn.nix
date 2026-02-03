@@ -96,7 +96,7 @@ in
         then
           (
             [
-              pkgs.apple-sdk_13
+              pkgs.apple-sdk_26
             ]
             ++ lib.optionals enableVulkan [darwin.moltenvk]
           )
