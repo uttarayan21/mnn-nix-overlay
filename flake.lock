@@ -21,16 +21,16 @@
     "mnn": {
       "flake": false,
       "locked": {
-        "lastModified": 1749173738,
-        "narHash": "sha256-pNljvQ4xMZ4VmuxQyXt+boNBZD0+UZNpNLrWrj8Rtfw=",
+        "lastModified": 1761886644,
+        "narHash": "sha256-t8DnrtZHecNFhjgMgEizb6zR4r9/JeEBlfOdKI4Tzzs=",
         "owner": "alibaba",
         "repo": "MNN",
-        "rev": "ebdada82634300956e08bd4056ecfeb1e4f23b32",
+        "rev": "5047919a1ae594d090ee54c7ea3403a9dee8cad4",
         "type": "github"
       },
       "original": {
         "owner": "alibaba",
-        "ref": "3.2.0",
+        "ref": "3.3.0",
         "repo": "MNN",
         "type": "github"
       }
